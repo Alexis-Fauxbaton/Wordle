@@ -34,16 +34,45 @@ def print_guesses(guesses):
                 print(colored(guesses[i][j].letter, guesses[i][j].color), end=' ')
         print()
 
+
+def get_possible_words(words, guesses, chances, answer):
+    possible_words = []
+    still_possible = True
+    for word in words:
+        still_possible = True
+        for j in range(CHANCES-chances+1):
+            for i in range(LEN_WORD):
+                if (guesses[j][i].color == 'white') and (guesses[j][i].letter in word):
+                    still_possible = False
+                    break
+                elif (guesses[j][i].color == 'green') and (guesses[j][i].letter != word[i]):
+                    still_possible = False
+                    break
+                elif (guesses[j][i].color == 'yellow') and (guesses[j][i].letter not in word):
+                    still_possible = False
+                    # Need to update for double letters
+                    break
+
+        if still_possible:
+            possible_words.append(word)
+    print('answer : ', answer)
+    return possible_words
+
+                
+
 def game():
     os.system('clear')
     words = []
+    possible_words = []
     guesses = [['_' for i in range(LEN_WORD)] for j in range(CHANCES)]
     with open('fr_wordlist.txt', 'r') as f:
         for line in f:
             words.append(line.strip())
 
+    possible_words = words.copy()
+
     answer = pick_random_word(words)
-    
+
     chances = CHANCES
 
     print_guesses(guesses)
@@ -54,17 +83,24 @@ def game():
         while len(guess) != 5:
             guess = input()
 
+        os.system('clear')  
+
         guess_representation = color_guess(guess, answer)
 
         guesses[CHANCES-chances] = guess_representation
 
+        possible_words = get_possible_words(words, guesses, chances, answer)
+
         print_guesses(guesses)
 
+        if len(possible_words) < 100:
+            print("There are {} Possible Words: {}".format(len(possible_words), possible_words))
+        else:
+            print("There are {} Possible Words".format(len(possible_words)))
+        
         if guess == answer:
             print('You win!')
             break
-        
-        os.system('clear')  
 
         chances -= 1
 
