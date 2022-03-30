@@ -154,6 +154,7 @@ def get_words_entropy_par(words, words_left):
 
 def game():
     os.system('clear')
+    os.system('cls')
     words = []
     possible_words = []
     guesses = [['_' for i in range(LEN_WORD)] for j in range(CHANCES)]
@@ -179,12 +180,14 @@ def game():
 
     while chances >= 1:
         guess = input()
-
+        t1 = 0
+        t2 = 0
         while len(guess) != 5:
             #print("Enter a 5 letter word : ")
             guess = input()
 
-        os.system('clear')  
+        os.system('clear')
+        os.system('cls')
 
         guess_representation = color_guess(guess, answer)
 
@@ -203,9 +206,14 @@ def game():
         else:
             print("There are {} Possible Words".format(len(possible_words)))
         
-        t1 = time.time()
-        entropies = get_words_entropy(words, possible_words)
-        t2 = time.time()
+        if len(possible_words) <= 10:
+            t1 = time.time()
+            entropies = get_words_entropy(possible_words, possible_words)
+            t2 = time.time()
+        else:
+            t1 = time.time()
+            entropies = get_words_entropy(words, possible_words)
+            t2 = time.time()
 
         print("Time taken to compute entropies: {}".format(t2-t1))
 
